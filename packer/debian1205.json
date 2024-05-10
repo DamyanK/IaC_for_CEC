@@ -1,0 +1,29 @@
+{
+    "builders": [
+      {
+        "type": "qemu",
+        "vm_name": "debian-12.05-preseed",
+        "format": "qcow2",
+        "accelerator": "kvm",
+        "boot_wait": "1s",
+        "memory": 1024,
+        "disk_size": "8192M",
+        "iso_url": "ISO/debian-12.5.0-amd64-netinst.iso",
+        "iso_checksum": "326b7737c4262e8eb09cd26773f3356a",
+        "ssh_username": "root",
+        "ssh_password": "root",
+  
+        "boot_command": [
+          "<down><tab>",
+          " auto-install/enable=true",
+          " debconf/priority=critical",
+          " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg<wait>",
+          " -- <wait>",
+          "<enter><wait>"
+        ],
+  
+        "http_directory": "http"
+      }
+    ]
+  }
+  

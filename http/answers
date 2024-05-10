@@ -1,0 +1,32 @@
+# Keyboard selection
+keyboard us
+
+# Accept the licensing agreement
+accept_license true
+
+# Disk partitioning
+disk_config sda
+
+# Install all available packages
+packages alpine-base
+
+# Set the hostname
+hostname alpine
+
+# Configure the network
+network_config dhcp
+
+# Set the root password
+password root root
+
+# Boot loader installation
+bootloader_config none
+
+# Installation method
+install_method apk
+
+# Mirror selection
+mirror http://dl-cdn.alpinelinux.org/alpine/v3.16/main
+
+# Kernel selection
+kernel linux-virt

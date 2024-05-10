@@ -1,0 +1,81 @@
+{
+  "builders": [
+    {
+      "type": "vmware-iso",
+      "name": "template-Ubuntu-2004",
+      "vm_name": "template-Ubuntu-2004",
+      "guest_os_type": "ubuntu-64",
+
+      "iso_url": "ISO/ubuntu-20.04.6-live-server-amd64.iso",
+      "iso_checksum": "md5:5a4fcbde8b0585d78b3de3cb33bcd874",
+      "Version": "12",
+      "vmx_data": {
+        "ethernet0.networkName": "VM Network",
+        "ethernet0.virtualDev": "e1000",
+        "ethernet0.present": "TRUE",
+        "virtualHW.version": "10",
+        "scsi0.virtualDev": "lsisas1068",
+        "vhv.enable": "TRUE"
+      },
+
+      "remote_type": "esx5",
+      "remote_host": "172.16.38.201",
+      "remote_username": "root",
+      "remote_password": "1qaz_!QAZ",
+      "remote_datastore": "datastore1",
+      "skip_validate_credentials": true,
+      "skip_export": false,
+      "keep_registered": false,
+      "format": "ova",
+      "output_directory": "ova/",
+      "memory": 1024,
+
+      "boot_wait": "2s",
+      "boot_command": [
+          "<wait><esc><wait>",
+          "<wait><esc><wait>",
+          "<f6><esc>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+          "<bs><bs><bs>",
+          "initrd=/casper/initrd ",
+          "autoinstall ",
+          "ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ",
+          "<enter>"
+          ],
+
+      "http_directory": "http",
+
+      "communicator": "ssh",
+      "ssh_username": "analyste",
+      "ssh_private_key_file":"../FILES/analyste.key",
+      "ssh_keypair_name":"analyste.key",
+      "ssh_pty": true,
+      "ssh_timeout": "20m",
+      "ssh_handshake_attempts": "100",
+
+      "shutdown_command": "echo Packer | sudo -S shutdown -P now",
+      "headless": true
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sudo apt update && sudo apt upgrade -y",
+        "sudo apt install -y open-vm-tools htop net-tools ifplugd resolvconf",
+        "#sudo sed -i 's|dhcp4: true|&\\n      dhcp-identifier: mac|' /etc/netplan/00-installer-config.yaml",
+        "sudo sed -i 's|GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"ipv6.disable=1\"|' /etc/default/grub",
+        "sudo update-grub",
+        "sudo apt-get clean"
+      ]
+    }
+  ]
+} 

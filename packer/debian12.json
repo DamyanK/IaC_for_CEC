@@ -1,0 +1,51 @@
+{
+  "variables": {
+      "vm_name": "debian12",
+      "numvcpus": "2",
+      "memsize": "2048",
+      "disk_size": "4096",
+      "iso_url": "ISO/debian-12.5.0-amd64-netinst.iso",
+      "iso_checksum": "326b7737c4262e8eb09cd26773f3356a",
+      "ssh_username" : "packer",
+      "ssh_password" : "packer",
+      "boot_wait": "5s"
+    },
+    "builders": [
+      {
+        "type": "virtualbox-iso",
+        "boot_command": ["<esc><wait>",
+         "auto <wait>",
+         "console-keymaps-at/keymap=fr <wait>",
+         "console-setup/ask_detect=false <wait>", 
+         "debconf/frontend=noninteractive <wait>", 
+         "debian-installer=fr_FR <wait>", 
+         "fb=false <wait>", "install <wait>", 
+         "packer_host={{ .HTTPIP }} <wait>", 
+         "packer_port={{ .HTTPPort }} <wait>", 
+         "kbd-chooser/method=fr <wait>", 
+         "keyboard-configuration/xkb-keymap=fr <wait>", 
+         "locale=fr_FR <wait>", 
+         "netcfg/get_hostname=debian12 <wait>", 
+         "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg <wait>",
+         "<enter><wait>"],
+        "boot_wait": "{{ user `boot_wait` }}",
+        "disk_size": "{{ user `disk_size` }}",
+        "headless": false,
+        "guest_os_type": "Debian_64",
+        "http_directory": "http",
+        "iso_checksum": "{{ user `iso_checksum` }}",
+        "iso_url": "{{ user `iso_url` }}",
+        "shutdown_command": "echo 'packer'|sudo -S shutdown -P now",
+        "ssh_password": "{{ user `ssh_password` }}",
+        "ssh_port": 22,
+        "ssh_username": "{{ user `ssh_username` }}",
+        "ssh_timeout": "30m",
+        "vm_name": "{{ user `vm_name` }}",
+        "vboxmanage": [
+          ["modifyvm", "{{.Name}}", "--memory", "{{ user `memsize` }}"],
+          ["modifyvm", "{{.Name}}", "--cpus", "{{ user `numvcpus` }}"]
+        ]
+      }
+  ],
+  "provisioners": []
+}
